@@ -53,7 +53,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
         String stringBuilder = "select new map(applicant.applicantId as applicantId, " +
                 "applicant.firstName as firstName, " +
-                "applicant.lastName as lastName, " +
+                "applicant.firstName as lastName, " +
                 "applicant.jobTitle as jobTitle, " +
                 "applicant.email as email, " +
                 "applicant.phoneNumber as phoneNumber, " +
