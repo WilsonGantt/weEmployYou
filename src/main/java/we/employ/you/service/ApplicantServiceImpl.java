@@ -19,7 +19,7 @@ import we.employ.you.model.User;
 @Service
 public class ApplicantServiceImpl implements ApplicantService {
 
-	private ApplicantDAO applicantDAO;
+	private final ApplicantDAO applicantDAO;
 
 	@Autowired
 	private UserDAO userDAO;

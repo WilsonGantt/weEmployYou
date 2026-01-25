@@ -1,5 +1,7 @@
 package we.employ.you.exception;
 
+import java.io.Serial;
+
 /**
  * This custom <code>Exception</code> is thrown if the data in the database is in
  * an invalid state, an example being when multiple rows of data are returned 
@@ -7,7 +9,8 @@ package we.employ.you.exception;
  */
 public class InvalidDataException extends RuntimeException {
     
-	private static final long serialVersionUID = -6249433169500678240L;
+	@Serial
+    private static final long serialVersionUID = -6249433169500678240L;
 
 	/**
      * Constructs a new exception with the specified detail message.

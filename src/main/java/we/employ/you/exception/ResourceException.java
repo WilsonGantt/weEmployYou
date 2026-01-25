@@ -1,7 +1,10 @@
 package we.employ.you.exception;
 
+import java.io.Serial;
+
 public class ResourceException extends RuntimeException {
 
+	@Serial
 	private static final long serialVersionUID = -5475749274672341089L;
 
 	public ResourceException() {
