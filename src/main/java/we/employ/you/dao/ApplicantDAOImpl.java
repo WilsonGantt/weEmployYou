@@ -45,10 +45,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
     /**
      * Returns a <code>Applicant</code> from the database by using the given applicant ID.
-     * @param connection the database connection used to retrieve the applicant data
-     * @param recruiterId the applicant ID used to retrieve the selected applicant ID.
      * @return an <code>ObservableList</code> of applicants
-     * @throws SQLException if an error occurs while accessing the database
      */
 	@Override
     public List<Applicant> getApplicants() {
@@ -110,10 +107,8 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
     /**
      * Returns the <code>Applicant</code> from the database with the given applicant ID.
-     * @param connection the database connection used to retrieve the applicant data
      * @param applicantId used to collect his/her applicant data
      * @return applicants
-     * @throws SQLException if an error occurs while accessing the database
      */
 	@Override
     public Applicant getApplicant(int applicantId) {
@@ -210,10 +205,8 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
     /**
      * Saves a <code>Applicant</code> into the database.
-     * @param connection the database connection used to save the applicant data
      * @param applicant the applicant to save in the database
      * @return the newly inserted applicant ID
-     * @throws SQLException if an error occurs while accessing the database
      */
     @Override
     public int saveApplicant(Applicant applicant) {
@@ -226,9 +219,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
     /**
      * Updates a <code>Applicant</code> in the database.
-     * @param connection the database connection used to update the applicant data
      * @param applicant the applicant to update in the database
-     * @throws SQLException if an error occurs while accessing the database
      */
     @Override
     public void updateApplicant(Applicant applicant) throws ValidationException {
@@ -269,10 +260,8 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
     /**
      * Deletes a <code>Applicant</code> from the database.
-     * @param connection the database connection used to delete the applicant data
      * @param applicantId the customer ID used to delete the applicant from the database
      * @throws MissingDataException if the customer cannot be found with the given ID
-     * @throws SQLException if an error occurs while accessing the database
      */
     @Override
     public void deleteApplicant(int applicantId) throws MissingDataException {
@@ -290,10 +279,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
     /**
      * Saves an applicant's resume into the database
-     * @param connection the database connection used to save the resume
-     * @param inputStream the stream of data consisting of the resume
-     * @param applicant the applicant who owns the resume
-     * @throws Exception if a database or IO error occurs during the transaction
+     * @param applicantFile the applicant who owns the resume
      */
     @Override
     public void saveApplicantFile(ApplicantFile applicantFile) {
@@ -321,10 +307,8 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
     /**
      *  Downloads the applicant's resume to the user's desktop
-     * @param connection the database connection used to get and download the resume
-     * @param applicant the <code>Applicant</code> who owns the resume
+     * @param fileId the <code>Applicant</code> who owns the resume
      * @return fileName the resume's file name
-     * @throws Exception if a database or IO error occurs during the transaction
      */
     @Override
     public byte[] downloadApplicantFile(int fileId) throws IOException, MissingDataException {
