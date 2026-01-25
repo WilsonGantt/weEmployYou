@@ -36,7 +36,7 @@ import we.employ.you.model.User;
 @Repository
 public class ApplicantDAOImpl implements ApplicantDAO {
 
-	private SessionFactory sessionFactory;
+	private final SessionFactory sessionFactory;
 
 	@Autowired
     public ApplicantDAOImpl(SessionFactory sessionFactory) {
@@ -54,28 +54,27 @@ public class ApplicantDAOImpl implements ApplicantDAO {
     public List<Applicant> getApplicants() {
         Session session = this.sessionFactory.getCurrentSession();
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("select new map(applicant.applicantId as applicantId, ");
-        stringBuilder.append("applicant.firstName as firstName, ");
-        stringBuilder.append("applicant.lastName as lastName, ");
-        stringBuilder.append("applicant.jobTitle as jobTitle, ");
-        stringBuilder.append("applicant.email as email, ");
-        stringBuilder.append("applicant.phoneNumber as phoneNumber, ");
-        stringBuilder.append("recruiter.userId as recruiterId, ");
-        stringBuilder.append("recruiter.firstName as recruiterFirstName, ");
-        stringBuilder.append("recruiter.lastName as recruiterLastName, ");
-        stringBuilder.append("employer.companyId as employerId, ");
-        stringBuilder.append("employer.companyName as employerName, ");
-        stringBuilder.append("applicant.contractToHireIndicator as contractToHireIndicator, ");
-        stringBuilder.append("applicant.hireDate as hireDate) ");
-        stringBuilder.append("from Applicant applicant");
-        stringBuilder.append("	inner join applicant.recruiter recruiter");
-        stringBuilder.append("	left join applicant.employer employer ");
-		stringBuilder.append("order by firstName, lastName");
+        String stringBuilder = "select new map(applicant.applicantId as applicantId, " +
+                "applicant.firstName as firstName, " +
+                "applicant.lastName as lastName, " +
+                "applicant.jobTitle as jobTitle, " +
+                "applicant.email as email, " +
+                "applicant.phoneNumber as phoneNumber, " +
+                "recruiter.userId as recruiterId, " +
+                "recruiter.firstName as recruiterFirstName, " +
+                "recruiter.lastName as recruiterLastName, " +
+                "employer.companyId as employerId, " +
+                "employer.companyName as employerName, " +
+                "applicant.contractToHireIndicator as contractToHireIndicator, " +
+                "applicant.hireDate as hireDate) " +
+                "from Applicant applicant" +
+                "	inner join applicant.recruiter recruiter" +
+                "	left join applicant.employer employer " +
+                "order by firstName, lastName";
 
         @SuppressWarnings("unchecked")
-        Query<Map<String, Object>> query = session.createQuery(stringBuilder.toString());
-        
+        Query<Map<String, Object>> query = session.createQuery(stringBuilder);
+
         List<Map<String, Object>> results = query.list();
 
         List<Applicant> applicants = new ArrayList<>();
@@ -222,9 +221,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
 		applicant.setBeginDate(LocalDateTime.now());
 
-        int applicantId = (int) session.save(applicant);
-
-        return applicantId;
+        return (int) session.save(applicant);
     }
 
     /**
@@ -361,7 +358,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
         List<Map<String, Object>> results = query.list();
 
         if (!results.isEmpty()) {
-	        results.stream().forEach(result -> {
+	        results.forEach(result -> {
 	        	applicantFiles.add(new ApplicantFile((int) result.get("fileId"),
 	        			String.valueOf(result.get("fileName")), (boolean) result.get("resumeIndicator")));
 	        });

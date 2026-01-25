@@ -18,7 +18,7 @@ import we.employ.you.util.LogUtil;
 @RestController
 public class LoginController {
 
-	private UserService userService;
+	private final UserService userService;
 
 	private int failedPasswordCount = 0;
 

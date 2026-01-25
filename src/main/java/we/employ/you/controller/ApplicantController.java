@@ -30,7 +30,7 @@ import we.employ.you.service.ApplicantService;
 @RestController
 public class ApplicantController {
 
-	private ApplicantService applicantService;
+	private final ApplicantService applicantService;
 
 	@Autowired
 	public ApplicantController(ApplicantService applicantService) {
@@ -127,9 +127,7 @@ public class ApplicantController {
 	@GetMapping(value = "/downloadApplicantFile/{fileId}")
 	@ResponseBody
 	public byte[] downloadApplicantFile(@PathVariable("fileId") String fileId) throws IOException, MissingDataException {
-		byte[] file = applicantService.downloadApplicantFile(Integer.parseInt(fileId));
-
-		return file;
+		return applicantService.downloadApplicantFile(Integer.parseInt(fileId));
 	}
 
 	@CrossOrigin(origins = "*")

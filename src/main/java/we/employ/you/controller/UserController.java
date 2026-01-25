@@ -29,7 +29,7 @@ import we.employ.you.util.PasswordUtil;
 @RestController
 public class UserController {
 
-	private UserService userService;
+	private final UserService userService;
 
 	@Autowired
 	public UserController(UserService userService) {

@@ -24,7 +24,7 @@ import we.employ.you.service.InterviewService;
 @RestController
 public class InterviewController {
 
-	private InterviewService interviewService;
+	private final InterviewService interviewService;
 
 	@Autowired
 	public InterviewController(InterviewService interviewService) {
