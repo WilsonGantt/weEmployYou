@@ -1,7 +1,6 @@
 package we.employ.you.dao;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,26 +50,25 @@ public class InterviewDAOImpl implements InterviewDAO {
 
         Session session = sessionFactory.getCurrentSession();
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("SELECT INTERVIEW.INTERVIEW_ID, ");
-        stringBuilder.append("APPLICANT.APPLICANT_ID, APPLICANT.FIRST_NAME AS APPLICANT_FIRST_NAME, ");
-        stringBuilder.append("APPLICANT.LAST_NAME AS APPLICANT_LAST_NAME, USER.FIRST_NAME AS USER_FIRST_NAME, ");
-        stringBuilder.append("USER.LAST_NAME AS USER_LAST_NAME, COMPANY.COMPANY_NAME, ");
-        stringBuilder.append("CONTACT.FIRST_NAME AS CONTACT_FIRST_NAME, CONTACT.LAST_NAME AS CONTACT_LAST_NAME, ");
-        stringBuilder.append("INTERVIEW_DATE, JOB_POSITION, APPLICANT_ATTEND_IND, SUCCESSFUL_HIRE_IND ");
-        stringBuilder.append("FROM WE_EMPLOY_YOU.INTERVIEW INTERVIEW");
-        stringBuilder.append("	INNER JOIN WE_EMPLOY_YOU.APPLICANT APPLICANT");
-        stringBuilder.append("		ON INTERVIEW.APPLICANT_ID = APPLICANT.APPLICANT_ID");
-        stringBuilder.append("	INNER JOIN WE_EMPLOY_YOU.USER USER");
-        stringBuilder.append("		ON APPLICANT.RECRUITER_ID = USER.USER_ID");
-        stringBuilder.append("	INNER JOIN WE_EMPLOY_YOU.COMPANY COMPANY");
-        stringBuilder.append("		ON INTERVIEW.COMPANY_ID = COMPANY.COMPANY_ID");
-        stringBuilder.append("	INNER JOIN WE_EMPLOY_YOU.CONTACT CONTACT");
-        stringBuilder.append("		ON INTERVIEW.CONTACT_ID = CONTACT.CONTACT_ID ");
-        stringBuilder.append("ORDER BY COMPANY.COMPANY_NAME, APPLICANT.FIRST_NAME, APPLICANT.LAST_NAME");
+        String stringBuilder = "SELECT INTERVIEW.INTERVIEW_ID, " +
+                "APPLICANT.APPLICANT_ID, APPLICANT.FIRST_NAME AS APPLICANT_FIRST_NAME, " +
+                "APPLICANT.LAST_NAME AS APPLICANT_LAST_NAME, USER.FIRST_NAME AS USER_FIRST_NAME, " +
+                "USER.LAST_NAME AS USER_LAST_NAME, COMPANY.COMPANY_NAME, " +
+                "CONTACT.FIRST_NAME AS CONTACT_FIRST_NAME, CONTACT.LAST_NAME AS CONTACT_LAST_NAME, " +
+                "INTERVIEW_DATE, JOB_POSITION, APPLICANT_ATTEND_IND, SUCCESSFUL_HIRE_IND " +
+                "FROM WE_EMPLOY_YOU.INTERVIEW INTERVIEW" +
+                "	INNER JOIN WE_EMPLOY_YOU.APPLICANT APPLICANT" +
+                "		ON INTERVIEW.APPLICANT_ID = APPLICANT.APPLICANT_ID" +
+                "	INNER JOIN WE_EMPLOY_YOU.USER USER" +
+                "		ON APPLICANT.RECRUITER_ID = USER.USER_ID" +
+                "	INNER JOIN WE_EMPLOY_YOU.COMPANY COMPANY" +
+                "		ON INTERVIEW.COMPANY_ID = COMPANY.COMPANY_ID" +
+                "	INNER JOIN WE_EMPLOY_YOU.CONTACT CONTACT" +
+                "		ON INTERVIEW.CONTACT_ID = CONTACT.CONTACT_ID " +
+                "ORDER BY COMPANY.COMPANY_NAME, APPLICANT.FIRST_NAME, APPLICANT.LAST_NAME";
 
         @SuppressWarnings("unchecked")
-        NativeQuery<Object[]> query = session.createNativeQuery(stringBuilder.toString());
+        NativeQuery<Object[]> query = session.createNativeQuery(stringBuilder);
 
         List<Object[]> results = query.list();
 
