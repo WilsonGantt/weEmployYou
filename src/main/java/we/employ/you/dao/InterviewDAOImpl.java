@@ -1,6 +1,7 @@
 package we.employ.you.dao;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ import we.employ.you.model.Contact;
 @Repository
 public class InterviewDAOImpl implements InterviewDAO {
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     @Autowired
     public InterviewDAOImpl(SessionFactory sessionFactory) {
@@ -42,9 +43,7 @@ public class InterviewDAOImpl implements InterviewDAO {
 
     /**
      * Returns an <code>ObservableList</code> of all the interviews in the database.
-     * @param connection the database connection used to retrieve the data
      * @return an <code>ObservableList</code> of interviews
-     * @throws SQLException thrown if an error occurs while connecting to the database
      */
     @Override
     public List<Interview> getInterviews() {
@@ -97,9 +96,7 @@ public class InterviewDAOImpl implements InterviewDAO {
     /**
      * Returns an <code>ObservableList</code> of all the interviews in the database,
      * based on the given customer ID.
-     * @param connection the database connection used to retrieve the data
      * @return an <code>ObservableList</code> of interviews
-     * @throws SQLException thrown if an error occurs while connecting to the database
      */
     @Override
     public List<Interview> getInterviews(int applicantId) {
@@ -160,27 +157,26 @@ public class InterviewDAOImpl implements InterviewDAO {
     public Interview getInterview(int interviewId) {
     	Session session = sessionFactory.getCurrentSession();
 
-    	StringBuilder stringBuilder = new StringBuilder();
-    	stringBuilder.append("select new map(interview.interviewId as interviewId, ");
-    	stringBuilder.append("applicant.firstName as firstName, ");
-    	stringBuilder.append("applicant.lastName as lastName, ");
-    	stringBuilder.append("company.companyId as companyId, ");
-        stringBuilder.append("company.companyName as companyName, ");
-        stringBuilder.append("interview.jobPosition as jobPosition, ");
-        stringBuilder.append("contact.contactId as contactId, ");
-        stringBuilder.append("contact.firstName as contactFirstName, ");
-        stringBuilder.append("contact.lastName as contactLastName, ");
-        stringBuilder.append("interview.interviewDate as interviewDate, ");
-        stringBuilder.append("interview.attendInterviewIndicator as attendInterviewIndicator, ");
-        stringBuilder.append("interview.successfulHireIndicator as successfulHireIndicator) ");
-        stringBuilder.append("from Interview interview");
-        stringBuilder.append("	inner join interview.applicant applicant");
-        stringBuilder.append("	inner join interview.company company");
-        stringBuilder.append("	inner join interview.contact contact");
-        stringBuilder.append("	where interview.interviewId = :interviewId");
+        String stringBuilder = "select new map(interview.interviewId as interviewId, " +
+                "applicant.firstName as firstName, " +
+                "applicant.lastName as lastName, " +
+                "company.companyId as companyId, " +
+                "company.companyName as companyName, " +
+                "interview.jobPosition as jobPosition, " +
+                "contact.contactId as contactId, " +
+                "contact.firstName as contactFirstName, " +
+                "contact.lastName as contactLastName, " +
+                "interview.interviewDate as interviewDate, " +
+                "interview.attendInterviewIndicator as attendInterviewIndicator, " +
+                "interview.successfulHireIndicator as successfulHireIndicator) " +
+                "from Interview interview" +
+                "	inner join interview.applicant applicant" +
+                "	inner join interview.company company" +
+                "	inner join interview.contact contact" +
+                "	where interview.interviewId = :interviewId";
 
         @SuppressWarnings("unchecked")
-        Query<Map<String, Object>> query = session.createQuery(stringBuilder.toString());
+        Query<Map<String, Object>> query = session.createQuery(stringBuilder);
         query.setParameter("interviewId", interviewId);
 
         Map<String, Object> result = query.uniqueResult();
@@ -225,9 +221,7 @@ public class InterviewDAOImpl implements InterviewDAO {
 
     /**
      * Saves the <code>Interview</code> into the database.
-     * @param connection the database connection used to save the interview data
      * @param interview the interview being inserted into the database
-     * @throws SQLException if an error occurs while connecting to the database
      */
     @Override
     public void saveInterview(Interview interview) {
@@ -256,13 +250,6 @@ public class InterviewDAOImpl implements InterviewDAO {
         session.save(companyInterviews);
     }
 
-    /**
-     * Updates the database with the <code>Interview</code> passed as a method
-     * parameter.
-     * @param connection the database connection used to save the interview data
-     * @param interview the interview being inserted into the database
-     * @throws SQLException if an error occurs while connecting to the database
-     */
     @Override
     public void updateInterview(Interview interview) {
     	Session session = sessionFactory.getCurrentSession();
@@ -326,12 +313,6 @@ public class InterviewDAOImpl implements InterviewDAO {
 		}
     }
 
-    /**
-     * Deletes the interview data from the database with the given interview ID.
-     * @param connection the database connection used to delete the data
-     * @param interviewId the ID used to delete the selected record
-     * @throws SQLException if an error occurs while connecting to the database
-     */
     @Override
     public void deleteInterview(int interviewId) {
     	Session session = sessionFactory.getCurrentSession();
@@ -343,15 +324,6 @@ public class InterviewDAOImpl implements InterviewDAO {
         session.delete(interview);
     }
 
-    /**
-     * Returns an <code>ObservableList</code> of <code>InterviewStats</code>, used
-     * for reporting purposes
-     * @param connection the database connection used to retrieve the data
-     * @param isEmployed
-     * @param isFullTime
-     * @return an <code>ObservableList</code> of <code>InterviewStats</code>
-     * @throws SQLException if an error occurs while trying to access the database
-     */
     @Override
     public List<InterviewStats> getInterviewStats(InterviewStatsCriteria criteria) {
         List<InterviewStats> interviewStats = new ArrayList<>();
