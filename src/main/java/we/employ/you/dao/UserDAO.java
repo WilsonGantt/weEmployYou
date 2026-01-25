@@ -32,6 +32,6 @@ public interface UserDAO {
     public void resetPassword(UserPassword userPassword);
 
     public String saveUser(User user) throws ValidationException;
-    
+
     public void deleteUser(String userId) throws ValidationException;
 }

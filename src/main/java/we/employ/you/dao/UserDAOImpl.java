@@ -39,7 +39,7 @@ import we.employ.you.util.PasswordUtil;
 @Repository
 public class UserDAOImpl implements UserDAO {
 
-	private SessionFactory sessionFactory;
+	private final SessionFactory sessionFactory;
 
 	@Autowired
     public UserDAOImpl(SessionFactory sessionFactory) {
