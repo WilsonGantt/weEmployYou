@@ -17,7 +17,7 @@ import we.employ.you.model.Interview;
 @Service
 public class InterviewServiceImpl implements InterviewService {
 
-	private InterviewDAO interviewDAO;
+	private final InterviewDAO interviewDAO;
 
 	@Autowired
 	public InterviewServiceImpl(InterviewDAO interviewDAO) {
