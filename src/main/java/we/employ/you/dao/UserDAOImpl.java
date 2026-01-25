@@ -46,14 +46,6 @@ public class UserDAOImpl implements UserDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    /**
-     * Inserts an initial set of data into the database during the initial login
-     * to the application.
-     * @param connection the database connection used to count the data.
-     * @param user
-     * @return
-     * @throws Exception if an error occurs during the transaction
-     */
     @Override
     public User insertInitialData(User user) throws Exception {
         LocalDateTime creationDate = LocalDateTime.now();
@@ -213,29 +205,19 @@ public class UserDAOImpl implements UserDAO {
         return user;
     }
 
-    /**
-     * Returns an <code>ObservableList</code> of users from the database.
-     * @param connection the database connection used to retrieve the user data
-     * from the database
-     * @param onlyRecruiters used to determine if only recruiters should be in
-     * the collection
-     * @return an <code>ObservableList</code> of users
-     * @throws SQLException if an error occurs while accessing the database
-     */
     @Override
     public List<User> getUsers() {
-    	StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("select new map(user.userId as userId, user.firstName as firstName, user.lastName as lastName, ");
-        stringBuilder.append("user.phoneNumber as phoneNumber, user.email as email, ");
-        stringBuilder.append("user.hireDate as hireDate, user.terminatedDate as terminatedDate, ");
-        stringBuilder.append("userRole.userRole as userRole) ");
-        stringBuilder.append("from User user");
-        stringBuilder.append("	inner join user.userRole userRole ");
-        stringBuilder.append("order by userId");
+        String sqlQuery = "select new map(user.userId as userId, user.firstName as firstName, user.lastName as lastName, " +
+                "user.phoneNumber as phoneNumber, user.email as email, " +
+                "user.hireDate as hireDate, user.terminatedDate as terminatedDate, " +
+                "userRole.userRole as userRole) " +
+                "from User user" +
+                "	inner join user.userRole userRole " +
+                "order by userId";
 
         Session session = sessionFactory.getCurrentSession();
         @SuppressWarnings("unchecked")
-		Query<Map<String, Object>> query = session.createQuery(stringBuilder.toString());
+		Query<Map<String, Object>> query = session.createQuery(sqlQuery);
 
         List<Map<String, Object>> results = query.list();
         List<User> users = new ArrayList<>();
@@ -264,38 +246,27 @@ public class UserDAOImpl implements UserDAO {
         return users;
     }
 
-    /**
-     * Returns a <code>User</code> with the provided user ID.
-     * @param connection the database connection used to retrieve the user data
-     * from the database
-     * @param userId the user ID of the user from the database
-     * @return a <code>User</code> from the database
-     * @throws Exception thrown if the data is in an unexpected and invalid state,
-     * or if the <code>User</code> data cannot be found in the database, of if
-     * another unexpected database error occurs during the transaction
-     */
     @Override
     public User getUser(String userId) {
     	User user = null;
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("select new map(user.firstName as firstName, user.lastName as lastName, ");
-        stringBuilder.append("password.password as password, password.creationDate as creationDate, ");
-        stringBuilder.append("password.temporaryPasswordIndicator as temporaryPasswordIndicator, ");
-        stringBuilder.append("password.temporaryPasswordExpirationDate as temporaryPasswordExpirationDate, ");
-        stringBuilder.append("user.hireDate as hireDate, user.terminatedDate as terminatedDate, ");
-        stringBuilder.append("userRole.userRole as userRole) ");
-        stringBuilder.append("from User user");
-        stringBuilder.append("	inner join user.userRole userRole");
-        stringBuilder.append("	inner join user.passwords password");
-        //Should only be one
-        stringBuilder.append("		with password.currentPasswordIndicator is true");
-        stringBuilder.append("	where user.userId = :userId");
+        String sqlQuery = "select new map(user.firstName as firstName, user.lastName as lastName, " +
+                "password.password as password, password.creationDate as creationDate, " +
+                "password.temporaryPasswordIndicator as temporaryPasswordIndicator, " +
+                "password.temporaryPasswordExpirationDate as temporaryPasswordExpirationDate, " +
+                "user.hireDate as hireDate, user.terminatedDate as terminatedDate, " +
+                "userRole.userRole as userRole) " +
+                "from User user" +
+                "	inner join user.userRole userRole" +
+                "	inner join user.passwords password" +
+                //Should only be one
+                "		with password.currentPasswordIndicator is true" +
+                "	where user.userId = :userId";
 
         Session session = sessionFactory.getCurrentSession();
 
         @SuppressWarnings("unchecked")
-		Query<Map<String, Object>> query = session.createQuery(stringBuilder.toString());
+		Query<Map<String, Object>> query = session.createQuery(sqlQuery);
         query.setParameter("userId", userId);
 
         List<Map<String, Object>> results = query.list();
@@ -461,17 +432,16 @@ public class UserDAOImpl implements UserDAO {
     public List<User> getRecruiters() {
     	List<User> recruiters = new ArrayList<>();
 
-    	StringBuilder stringBuilder = new StringBuilder();
-    	stringBuilder.append("select new map(user.userId as userId, ")
-	    	.append("user.firstName as firstName, ")
-	    	.append("user.lastName as lastName) ")
-	    	.append("from User user ")
-	    	.append("	inner join user.userRole userRole")
-	    	.append("	where userRole.userRole = 'REC'");
+        String sqlQuery = "select new map(user.userId as userId, " +
+                "user.firstName as firstName, " +
+                "user.lastName as lastName) " +
+                "from User user " +
+                "	inner join user.userRole userRole" +
+                "	where userRole.userRole = 'REC'";
 
     	Session session = sessionFactory.getCurrentSession();
     	@SuppressWarnings("unchecked")
-		Query<Map<String, Object>> query = session.createQuery(stringBuilder.toString());
+		Query<Map<String, Object>> query = session.createQuery(sqlQuery);
     	List<Map<String, Object>> results = query.list();
 
     	if (!results.isEmpty()) {
@@ -489,12 +459,7 @@ public class UserDAOImpl implements UserDAO {
 
     	return recruiters;
     }
-    /**
-     * Returns a <code>List</code> of the logged in user's passwords from the database.
-     * @param connection the database connection used to retrieve the user data
-     * @return userPasswords
-     * @throws SQLException if an error occurs during the transaction
-     */
+
     @Override
     public List<UserPassword> getUserPasswords(String userId) {
         Session session = sessionFactory.getCurrentSession();
@@ -508,15 +473,6 @@ public class UserDAOImpl implements UserDAO {
         return query.list();
     }
 
-    /**
-     * Resets the user's password to either a temporary password of a user created password.
-     * @param connection the connection used to execute the update
-     * @param userId the ID of the user with the updated password
-     * @param password the newly created password which is encrypted
-     * @param isTemporaryPassword determines if it is a temporary password
-     * @param delete determines if the oldest password should be deleted.
-     * @throws Exception if an error occurs during the transaction
-     */
 	@Override
     public void resetPassword(UserPassword userPassword) {
 		Session session = sessionFactory.getCurrentSession();
@@ -552,13 +508,6 @@ public class UserDAOImpl implements UserDAO {
         session.save(userPassword);
     }
 
-    /**
-     * Insert a new <code>User</code> it the related data into the database.
-     * @param connection the connection used the execute the transaction
-     * @param user the user being inserted into the database
-     * @throws SQLException if a database error occurs during the transaction
-     * @throws ValidationException if a validation error occurs during the transaction
-     */
     @Override
     public String saveUser(User user) throws ValidationException {
     	String userId = null;
@@ -616,13 +565,6 @@ public class UserDAOImpl implements UserDAO {
         return userId;
     }
 
-    /**
-     * Deletes the <code>User</code> from the database
-     * @param connection the connection used the execute the transaction
-     * @param userId the ID of the user being deleted
-     * @throws SQLException if a database error occurs during the transaction
-     * @throws ValidationException  if a validation error occurs during the transaction
-     */
     @Override
     public void deleteUser(String userId) throws ValidationException {
     	Session session = sessionFactory.getCurrentSession();
