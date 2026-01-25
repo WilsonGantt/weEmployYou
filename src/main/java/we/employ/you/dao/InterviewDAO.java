@@ -1,5 +1,6 @@
 package we.employ.you.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import we.employ.you.model.Company;
@@ -19,11 +20,8 @@ public interface InterviewDAO {
     /**
      * Returns an <code>ObservableList</code> of all the interviews in the database,
      * based on the given applicant ID.
-     * @param connection the database connection used to retrieve the data
-     * @param onlyPendingInterviews used to determine if only pending interviews
-     * should be selected
+     * @param applicantId the database connection used to retrieve the data
      * @return an <code>ObservableList</code> of interviews
-     * @throws SQLException thrown if an error occurs while connecting to the database
      */
     public List<Interview> getInterviews(int applicantId);
 
@@ -35,38 +33,28 @@ public interface InterviewDAO {
 
     /**
      * Saves the <code>Interview</code> into the database.
-     * @param connection the database connection used to save the interview data
      * @param interview the interview being inserted into the database
-     * @throws SQLException if an error occurs while connecting to the database
      */
     public void saveInterview(Interview interview);
 
     /**
      * Updates the database with the <code>Interview</code> passed as a method
      * parameter.
-     * @param connection the database connection used to save the interview data
      * @param interview the interview being inserted into the database
-     * @throws SQLException if an error occurs while connecting to the database
      */
     public void updateInterview(Interview interview);
 
     /**
      * Deletes the interview data from the database with the given interview ID.
-     * @param connection the database connection used to delete the data
      * @param interviewId the ID used to delete the selected record
-     * @throws SQLException if an error occurs while connecting to the database
      */
     public void deleteInterview(int interviewId);
 
     /**
      * Returns an <code>ObservableList</code> of <code>InterviewStats</code>, used
      * for reporting purposes
-     * @param connection the database connection used to retrieve the data
-     * @param isEmployed
-     * @param allEmployed
-     * @param isFullTime
+     * @param criteria the database connection used to retrieve the data
      * @return an <code>ObservableList</code> of <code>InterviewStats</code>
-     * @throws SQLException if an error occurs while trying to access the database
      */
     public List<InterviewStats> getInterviewStats(InterviewStatsCriteria criteria);
 
@@ -74,7 +62,7 @@ public interface InterviewDAO {
      * This nested class is used for reporting the total number of interviews
      * by employment status.
      */
-    public static class InterviewStats {
+    public class InterviewStats {
         private String applicant;
         private String orientationDate;
         private String employmentStatus;
@@ -138,7 +126,6 @@ public interface InterviewDAO {
 
         /**
          * Sets the applicant's employment status
-         * @param employmentStatus
          */
         public void setEmploymentStatus(String employmentStatus) {
             this.employmentStatus = employmentStatus;
@@ -146,7 +133,6 @@ public interface InterviewDAO {
 
         /**
          * Returns the applicant's hire date
-         * @return
          */
         public String getHireDate() {
             return hireDate;
@@ -154,7 +140,6 @@ public interface InterviewDAO {
 
         /**
          * Sets the applicant's hire date
-         * @param hireDate
          */
         public void setHireDate(String hireDate) {
             this.hireDate = hireDate;
