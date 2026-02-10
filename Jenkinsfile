@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9-eclipse-temurin-21'  // Maven + JDK for building
-            args '-v /deploy-webapps:/deploy-webapps'  // Mount shared deploy dir
-        }
-    }
+    agent any
 
     triggers {
         pollSCM('H/5 * * * *')  // Check for changes every 5 minutes (triggers on merge/push)
