@@ -17,6 +17,16 @@ pipeline {
             }
         }
 
+        stage('Install Custom Dependency') {
+            steps {
+                dir('dependency-project') {  // Temporary dir for the dep
+                    git url: 'https://github.com/WilsonGantt/weEmployYouModel.git', branch: 'master'  // Update URL/branch
+                    // credentialsId: 'your-git-cred' if private
+                    sh 'mvn clean install -DskipTests'  // Installs to local .m2
+                }
+            }
+        }
+
         stage('Build WAR') {
             steps {
                 sh 'mvn clean package -DskipTests'
