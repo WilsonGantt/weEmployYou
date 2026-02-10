@@ -34,9 +34,9 @@ pipeline {
         }
 
         stage('Deploy to Tomcat') {
-            when {
-                branch 'master'  // Only deploy on master branch (after merge)
-            }
+//            when {
+//                branch 'master'  // Only deploy on master branch (after merge)
+//            }
             steps {
                 echo 'Deploying new version...'
                 sh '''
