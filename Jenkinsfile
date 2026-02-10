@@ -41,10 +41,10 @@ pipeline {
                 echo 'Deploying new version...'
                 sh '''
                     # Clean old deployment
-                    rm -rf /deploy-webapps/*
+                    rm -rf /deploy-webapps/weEmployYou.war
 
                     # Copy new WAR as ROOT.war (deploys at http://localhost:8080/)
-                    cp target/*.war /deploy-webapps/ROOT.war
+                    cp target/weEmployYou-*.war /deploy-webapps/weEmployYou.war
                 '''
             }
         }
