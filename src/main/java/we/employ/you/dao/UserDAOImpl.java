@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Hibernate;
+import org.hibernate.LobHelper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.jdbc.LobCreator;
@@ -378,10 +379,10 @@ public class UserDAOImpl implements UserDAO {
 			"select userPhoto from User where userId = :userId");
 		photoQuery.setParameter("userId", userId);
 
-		LobCreator lobCreator = Hibernate.getLobCreator(session);
+		LobHelper lobHelper = session.getLobHelper();
 
 		if (photoQuery.uniqueResult() != null) {
-			Blob blob = lobCreator.createBlob(photoQuery.uniqueResult());
+			Blob blob = lobHelper.createBlob(photoQuery.uniqueResult());
 			InputStream inputStream = null;
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

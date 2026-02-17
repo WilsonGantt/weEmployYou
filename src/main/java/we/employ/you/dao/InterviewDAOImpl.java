@@ -173,7 +173,6 @@ public class InterviewDAOImpl implements InterviewDAO {
                 "	inner join interview.contact contact" +
                 "	where interview.interviewId = :interviewId";
 
-        @SuppressWarnings("unchecked")
         Query<Map<String, Object>> query = session.createQuery(stringBuilder);
         query.setParameter("interviewId", interviewId);
 
