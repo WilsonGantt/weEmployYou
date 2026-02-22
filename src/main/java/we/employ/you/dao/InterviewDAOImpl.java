@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -33,11 +33,11 @@ import we.employ.you.model.Contact;
 @Repository
 public class InterviewDAOImpl implements InterviewDAO {
 
-    private final SessionFactory sessionFactory;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Autowired
-    public InterviewDAOImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public InterviewDAOImpl(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     /**
@@ -48,7 +48,7 @@ public class InterviewDAOImpl implements InterviewDAO {
     public List<Interview> getInterviews() {
     	List<Interview> interviews = new ArrayList<>();
 
-        Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
         String stringBuilder = "SELECT INTERVIEW.INTERVIEW_ID, " +
                 "APPLICANT.APPLICANT_ID, APPLICANT.FIRST_NAME AS APPLICANT_FIRST_NAME, " +
@@ -98,7 +98,7 @@ public class InterviewDAOImpl implements InterviewDAO {
      */
     @Override
     public List<Interview> getInterviews(int applicantId) {
-    	Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
         List<Interview> interviews = new ArrayList<>();
         Interview interview;
@@ -153,7 +153,7 @@ public class InterviewDAOImpl implements InterviewDAO {
 
     @Override
     public Interview getInterview(int interviewId) {
-    	Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
         String stringBuilder = "select new map(interview.interviewId as interviewId, " +
                 "applicant.firstName as firstName, " +
@@ -197,7 +197,7 @@ public class InterviewDAOImpl implements InterviewDAO {
 
     @Override
     public List<Company> getCompanies() {
-    	Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
     	@SuppressWarnings("unchecked")
 		Query<Company> query = session.createQuery("from Company");
@@ -207,7 +207,7 @@ public class InterviewDAOImpl implements InterviewDAO {
 
     @Override
     public List<Contact> getContacts(int companyId) {
-    	Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
     	@SuppressWarnings("unchecked")
 		Query<Contact> query = session.createQuery("from Contact contact where contact.company.companyId = :companyId");
@@ -222,7 +222,7 @@ public class InterviewDAOImpl implements InterviewDAO {
      */
     @Override
     public void saveInterview(Interview interview) {
-    	Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
     	if (interview.getCompany().isNewCompany()) {
     		Company company = new Company(interview.getCompany().getCompanyName());
@@ -249,7 +249,7 @@ public class InterviewDAOImpl implements InterviewDAO {
 
     @Override
     public void updateInterview(Interview interview) {
-    	Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
     	boolean updateCompanyInterviews = false;
 
@@ -312,7 +312,7 @@ public class InterviewDAOImpl implements InterviewDAO {
 
     @Override
     public void deleteInterview(int interviewId) {
-    	Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
     	CompanyInterviews companyInterviews = session.get(CompanyInterviews.class, interviewId);
     	session.delete(companyInterviews);
@@ -347,7 +347,7 @@ public class InterviewDAOImpl implements InterviewDAO {
 
 		stringBuilder.append("ORDER BY APPLICANT");
 
-        Session session = sessionFactory.getCurrentSession();
+        Session session = this.entityManagerFactory.unwrap(Session.class);
 
         @SuppressWarnings("unchecked")
 		NativeQuery<Object[]> query = session.createNativeQuery(stringBuilder.toString());
