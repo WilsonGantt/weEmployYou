@@ -26,7 +26,7 @@ public class WeEmployYouConfiguration {
 		emf.setPackagesToScan("we.employ.you");
 
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		vendorAdapter.setShowSql(true); 
+		vendorAdapter.setShowSql(true);
 		emf.setJpaVendorAdapter(vendorAdapter);
 
 		emf.setJpaProperties(hibernateProperties());
@@ -53,8 +53,9 @@ public class WeEmployYouConfiguration {
 	    return new WebMvcConfigurer() {
 	        @Override
 	        public void addCorsMappings(CorsRegistry registry) {
-	            registry.addMapping("/**")
-	                .allowedOrigins("http://localhost:4200");
+	            registry.addMapping("/**").allowedHeaders("*")
+						.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+	                	.allowedOrigins("http://localhost:4200");
 	        }
 	    };
 	}
