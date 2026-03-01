@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
 import org.hibernate.LobHelper;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -35,11 +35,11 @@ import we.employ.you.model.User;
 @Repository
 public class ApplicantDAOImpl implements ApplicantDAO {
 
-	private final EntityManagerFactory entityManagerFactory;
+	private final EntityManager entityManager;
 
 	@Autowired
-	public ApplicantDAOImpl(EntityManagerFactory entityManagerFactory) {
-		this.entityManagerFactory = entityManagerFactory;
+	public ApplicantDAOImpl(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
     /**
      * Returns a <code>Applicant</code> from the database by using the given applicant ID.
@@ -47,7 +47,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
      */
 	@Override
     public List<Applicant> getApplicants() {
-        Session session = this.entityManagerFactory.unwrap(Session.class);
+        Session session = this.entityManager.unwrap(Session.class);
 
         String stringBuilder = "select new map(applicant.applicantId as applicantId, " +
                 "applicant.firstName as firstName, " +
@@ -110,7 +110,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
      */
 	@Override
     public Applicant getApplicant(int applicantId) {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("select new map(applicant.applicantId as applicantId, ");
@@ -208,7 +208,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
      */
     @Override
     public int saveApplicant(Applicant applicant) {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
 		applicant.setBeginDate(LocalDateTime.now());
 
@@ -221,7 +221,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
      */
     @Override
     public void updateApplicant(Applicant applicant) throws ValidationException {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
     	if (applicant.getEmployer() != null && !applicant.getEmployer().getCompanyName().isBlank()) {
     		if (applicant.getInterviews().isEmpty()) {
@@ -263,7 +263,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
      */
     @Override
     public void deleteApplicant(int applicantId) throws MissingDataException {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
     	Applicant applicant = session.get(Applicant.class, applicantId);
 
@@ -281,7 +281,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
      */
     @Override
     public void saveApplicantFile(ApplicantFile applicantFile) {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
     	//Keeping only one resume in the database
     	if (applicantFile.isResumeIndicator()) {
@@ -310,7 +310,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
      */
     @Override
     public byte[] downloadApplicantFile(int fileId) throws IOException, MissingDataException {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
         ApplicantFile applicantFile = session.get(ApplicantFile.class, fileId);
 
@@ -325,7 +325,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
     public List<ApplicantFile> getApplicantFiles(int applicantId) {
     	List<ApplicantFile> applicantFiles = new ArrayList<>();
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
     	@SuppressWarnings("unchecked")
 		Query<Map<String, Object>> query = session.createQuery(
@@ -351,7 +351,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
     @Override
     public void deleteApplicantFile(int fileId) {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
     	Query<?> query =
     		session.createQuery("delete from ApplicantFile where fileId = :fileId");
@@ -363,7 +363,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 	public byte[] getApplicantPhoto(int applicantId) {
 		byte[] photo = null;
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
 		@SuppressWarnings("unchecked")
 		Query<byte[]> photoQuery = session.createQuery(
@@ -409,7 +409,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 
 	@Override
 	public void saveApplicantPhoto(int applicantId, byte[] photo) {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
 		Query<?> query = session.createQuery(
 				"update Applicant "

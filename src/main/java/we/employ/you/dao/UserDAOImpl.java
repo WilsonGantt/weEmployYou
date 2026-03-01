@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
 import org.hibernate.LobHelper;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -38,11 +38,11 @@ import we.employ.you.util.PasswordUtil;
 @Repository
 public class UserDAOImpl implements UserDAO {
 
-	private final EntityManagerFactory entityManagerFactory;
+	private final EntityManager entityManager;
 
 	@Autowired
-    public UserDAOImpl(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
+    public UserDAOImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class UserDAOImpl implements UserDAO {
         LocalDateTime creationDate = LocalDateTime.now();
         LocalDate now = creationDate.toLocalDate();
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
         if (user != null) {
         	session.save(user);
@@ -214,7 +214,7 @@ public class UserDAOImpl implements UserDAO {
                 "	inner join user.userRole userRole " +
                 "order by userId";
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
         @SuppressWarnings("unchecked")
 		Query<Map<String, Object>> query = session.createQuery(sqlQuery);
 
@@ -262,7 +262,7 @@ public class UserDAOImpl implements UserDAO {
                 "		with password.currentPasswordIndicator is true" +
                 "	where user.userId = :userId";
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
         @SuppressWarnings("unchecked")
 		Query<Map<String, Object>> query = session.createQuery(sqlQuery);
@@ -315,7 +315,7 @@ public class UserDAOImpl implements UserDAO {
 	public User getPersistedUser(String userId) {
     	User user = new User();
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
 		Query<Map<String, Object>> query = session.createQuery(
 			"select new map(user.firstName as firstName, " +
@@ -370,7 +370,7 @@ public class UserDAOImpl implements UserDAO {
 	public byte[] getEmployeePhoto(String userId) {
 		byte[] photo = null;
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
 		@SuppressWarnings("unchecked")
 		Query<byte[]> photoQuery = session.createQuery(
@@ -416,7 +416,7 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public void saveEmployeePhoto(String userId, byte[] photo) {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
 		Query<?> query = session.createQuery(
 				"update User "
@@ -438,7 +438,7 @@ public class UserDAOImpl implements UserDAO {
                 "	inner join user.userRole userRole" +
                 "	where userRole.userRole = 'REC'";
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
     	@SuppressWarnings("unchecked")
 		Query<Map<String, Object>> query = session.createQuery(sqlQuery);
     	List<Map<String, Object>> results = query.list();
@@ -461,7 +461,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public List<UserPassword> getUserPasswords(String userId) {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
         @SuppressWarnings("unchecked")
 		Query<UserPassword> query = session.createQuery(
 				"from UserPassword password"
@@ -474,7 +474,7 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
     public void resetPassword(UserPassword userPassword) {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
         //Deleting the oldest password within the history to keep the number
         //of saved passwords at 12
@@ -511,7 +511,7 @@ public class UserDAOImpl implements UserDAO {
     public String saveUser(User user) throws ValidationException {
     	String userId = null;
 
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
 
         if (user.getUserId() == null) {
             //Building the new user ID. The initial ID is WEU00001. The subsequent
@@ -566,7 +566,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void deleteUser(String userId) throws ValidationException {
-		Session session = this.entityManagerFactory.unwrap(Session.class);
+		Session session = this.entityManager.unwrap(Session.class);
     	//Preventing the deletion if there are still applicants associated
         //with this user (recruiter)
     	@SuppressWarnings("unchecked")
